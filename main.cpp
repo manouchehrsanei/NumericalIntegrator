@@ -8,37 +8,12 @@
 #include "pzgmesh.h"
 #include "tpzgeoelrefpattern.h"
 
-#include "pzgeopoint.h"
 #include "TPZGeoLinear.h"
-
 #include "pzgeotriangle.h"
 #include "pzgeoquad.h"
-
-#include "pzgeotetrahedra.h"
-#include "pzgeopyramid.h"
-#include "pzgeoprism.h"
 #include "TPZGeoCube.h"
 
-
 #include "TPZVTKGeoMesh.h"
-
-
-#include "tpzquadraticline.h"
-#include "tpzquadratictrig.h"
-#include "tpzquadraticquad.h"
-#include "tpzquadraticcube.h"
-#include "tpzquadratictetra.h"
-#include "tpzquadraticprism.h"
-
-#include "tpzarc3d.h"
-#include "tpzellipse3d.h"
-#include "tpzgeoblend.h"
-
-#include "pzvec.h"
-#include "pzquad.h"
-#include "tpzintrulep3d.h"
-
-
 
 
 
@@ -47,71 +22,205 @@
 TPZGeoMesh *CreateOmega1D(long num_el, REAL a1, REAL a2);
 
 
+// ************************ (Create a linear Omega description : 2D) ********************************************
 
+TPZGeoMesh *CreateOmega2DTri(long nnodes, REAL a1, REAL a2,REAL b1, REAL b2);
 
-// ************************************** (Create linear meshes: 2D) ********************************************
+TPZGeoMesh *CreateOmega2DQuad(long nnodesqu, REAL a1, REAL a2,REAL b1, REAL b2);
 
+// ************************ (Create a linear Omega description : 3D) ********************************************
 
-TPZGeoMesh *CreateTwoDTriGMesh(long nnodes, REAL Lx, REAL Ly);
-
-TPZGeoMesh *CreateTwoDQuadGMesh(long nnodesqu, REAL Lx, REAL Ly);
-
-
-// ************************************* (Create linear meshes: 3D) ********************************************
-
-
-TPZGeoMesh *CreateThreeDHexPrytetGMesh(long nnodesthrhpt, REAL Lx, REAL Ly, REAL Lz);
+TPZGeoMesh *CreateOmega3DHexa(long nnodeshexa, REAL a1, REAL a2,REAL b1, REAL b2, REAL c1, REAL c2);
 
 
 
-
-
-
-
-// Example Functions
+// ************************************************ (Example Functions) ****************************************
 
 REAL f_1D(TPZManVector<REAL,3> &x);
+REAL f_2D(TPZManVector<REAL,3> &x);
+REAL f_3D(TPZManVector<REAL,3> &x);
 
 
-// ******************************************** (main of program) ***********************************************
+
+
+// ******************************************** (main of program) **********************************************
 
 
 int main() {
 
-    int order = 10;
-    long num_el = 10;
-    REAL a1 = 0.0;
-    REAL a2 = 1.0;
-    TPZGeoMesh * Omega = CreateOmega1D(num_el, a1, a2);
-//    TPZGeoMesh * Omega = CreateOmega2D(num_el, a1, a2, b1, b2);
-    long n_elements = Omega->NElements();
+    // ******************************************** (1D) ***********************************************
 
+//    
+//    int order = 10;
+//    long num_el = 1;
+//    REAL a1 = 0.0;
+//    REAL a2 = 10.0;
+//    TPZGeoMesh * Omega = CreateOmega1D(num_el, a1, a2);
+//    long n_elements = Omega->NElements();
+//
+//    REAL NumericalIntegral = 0.0;
+//    
+//    for (long iel = 0; iel < n_elements; iel++)
+//    { // for a all element in the mesh
+//    
+//        TPZGeoEl * element = Omega->Element(iel);
+//        int itself = element->NSides() - 1;
+//        TPZIntPoints * IntegrationRule = element->CreateSideIntegrationRule(itself, order);
+//        int n_points = IntegrationRule ->NPoints();
+//        
+//        TPZManVector<REAL,3> x;
+//        TPZManVector<REAL,3> par_space;
+//        REAL w, detjac;
+//        TPZFMatrix<REAL> jac, jacinv, axes;
+//        
+//        for (int ip = 0; ip < n_points; ip++)
+//        {
+//            IntegrationRule->Point(ip, par_space, w);
+//            
+//            element->X(par_space, x);
+//            element->Jacobian(par_space, jac, axes, detjac, jacinv);
+//            
+//            NumericalIntegral += w * detjac * (1.0);
+//        }
+//    }
+//        
+//    std::cout << "Numerical integration = " << NumericalIntegral << std::endl;
+    
+    // ******************************************** (2D) ***********************************************
+    
+//    
+//    int order = 20;
+//    long nnodes = 9;
+//    long num_el = nnodes-1;
+//    REAL a1 = 0.0;
+//    REAL a2 = 10.0;
+//    REAL b1 = 0.0;
+//    REAL b2 = 10.0;
+//
+//    TPZGeoMesh * Omega = CreateOmega2DTri(nnodes, a1, a2, b1, b2);
+//    long n_elements = Omega->NElements();
+//    
+//    REAL NumericalIntegral = 0.0;
+//    
+//    for (long iel = 0; iel < n_elements; iel++)
+//    { // for a all element in the mesh
+//        
+//        TPZGeoEl * element = Omega->Element(iel);
+//        int itself = element->NSides() - 1;
+//        
+//        TPZIntPoints * IntegrationRule = element->CreateSideIntegrationRule(itself, order);
+//        int n_points = IntegrationRule ->NPoints();
+//        
+//        TPZManVector<REAL,3> x;
+//
+//        TPZManVector<REAL,3> par_space;
+//        REAL w, detjac;
+//        TPZFMatrix<REAL> jac, jacinv, axes;
+//        
+//        for (int ip = 0; ip < n_points; ip++)
+//        {
+//            IntegrationRule->Point(ip, par_space, w);
+//            
+//            element->X(par_space, x);
+//            element->Jacobian(par_space, jac, axes, detjac, jacinv);
+//            
+//            NumericalIntegral += w * detjac * (f_2D(x));
+//        }
+//    }
+//    
+//    std::cout << "Numerical integration = " << NumericalIntegral << std::endl;
+    
+   
+// -------------------------------- 2D Quad -------------
+//
+//    int order = 15;
+//    long nnodesqu = 9;
+//    long num_el = nnodesqu/2;
+//    REAL a1 = 0.0;
+//    REAL a2 = 10.0;
+//    REAL b1 = 0.0;
+//    REAL b2 = 10.0;
+//    
+//    TPZGeoMesh * Omega = CreateOmega2DQuad(nnodesqu, a1, a2, b1, b2);
+//    long n_elements = Omega->NElements();
+//    
+//    REAL NumericalIntegral = 0.0;
+//    
+//    for (long iel = 0; iel < n_elements; iel++)
+//    { // for a all element in the mesh
+//        
+//        TPZGeoEl * element = Omega->Element(iel);
+//        int itself = element->NSides() - 1;
+//        
+//        TPZIntPoints * IntegrationRule = element->CreateSideIntegrationRule(itself, order);
+//        int n_points = IntegrationRule ->NPoints();
+//        
+//        TPZManVector<REAL,3> x;
+//        
+//        TPZManVector<REAL,3> par_space;
+//        REAL w, detjac;
+//        TPZFMatrix<REAL> jac, jacinv, axes;
+//        
+//        for (int ip = 0; ip < n_points; ip++)
+//        {
+//            IntegrationRule->Point(ip, par_space, w);
+//            
+//            element->X(par_space, x);
+//            element->Jacobian(par_space, jac, axes, detjac, jacinv);
+//            
+//            NumericalIntegral += w * detjac * (f_2D(x));
+//        }
+//    }
+//    
+//    std::cout << "Numerical integration = " << NumericalIntegral << std::endl;
+//    
+    
+    
+    // ******************************************** (3D) ***********************************************
+
+    
+    int order = 20;
+    long nnodeshexa = 12;
+    long num_el = nnodeshexa/6;
+    REAL a1 = 0.0;
+    REAL a2 = 10.0;
+    REAL b1 = 0.0;
+    REAL b2 = 10.0;
+    REAL c1 = 0.0;
+    REAL c2 = 10.0;
+    
+    TPZGeoMesh * Omega = CreateOmega3DHexa(nnodeshexa, a1, a2, b1, b2, c1, c2);
+    long n_elements = Omega->NElements();
+    
     REAL NumericalIntegral = 0.0;
     
-    for (long iel = 0; iel < n_elements; iel++) { // for a all element in the mesh
-    
+    for (long iel = 0; iel < n_elements; iel++)
+    { // for a all element in the mesh
+        
         TPZGeoEl * element = Omega->Element(iel);
         int itself = element->NSides() - 1;
+        
         TPZIntPoints * IntegrationRule = element->CreateSideIntegrationRule(itself, order);
         int n_points = IntegrationRule ->NPoints();
         
         TPZManVector<REAL,3> x;
+        
         TPZManVector<REAL,3> par_space;
         REAL w, detjac;
         TPZFMatrix<REAL> jac, jacinv, axes;
         
-        for (int ip = 0; ip < n_points; ip++) {
+        for (int ip = 0; ip < n_points; ip++)
+        {
             IntegrationRule->Point(ip, par_space, w);
             
             element->X(par_space, x);
             element->Jacobian(par_space, jac, axes, detjac, jacinv);
             
-            NumericalIntegral += w * detjac * (1.0);
+            NumericalIntegral += w * detjac * (f_3D(x));
         }
     }
-        
+    
     std::cout << "Numerical integration = " << NumericalIntegral << std::endl;
-        
     
     
     return 0;
@@ -122,17 +231,46 @@ int main() {
 
 // ++++++++++++++++++++++++++++++++++++++++++++ functions +++++++++++++++++++++++++++++++++++++++++++++++++++
 
-REAL f_1D(TPZManVector<REAL,3> &x){
+// ------------------------------------------ 1D -------------
+
+REAL f_1D(TPZManVector<REAL,3> &x)
+{
     REAL x1 = x[0];
-    REAL f = (1.0 - x1)*x1*sin(2.0*x1);
-    return f;
+    
+    REAL f1D = (1.0 - x1)*x1*sin(2.0*x1);
+    return f1D;
 }
+
+// ------------------------------------------ 2D -------------
+
+REAL f_2D(TPZManVector<REAL,3> &x)
+{
+    REAL x1 = x[0];
+    REAL x2 = x[1];
+
+    REAL f2D = ((1.0 - x1)*x1*sin(2.0*x1))*((1.0 - x2)*x2*sin(2.0*x2));
+    return f2D;
+}
+
+// ------------------------------------------ 3D -------------
+
+REAL f_3D(TPZManVector<REAL,3> &x)
+{
+    REAL x1 = x[0];
+    REAL x2 = x[1];
+    REAL x3 = x[2];
+
+    REAL f3D = ((1.0 - x1)*x1*sin(2.0*x1))*((1.0 - x2)*x2*sin(2.0*x2))*((1.0 - x3)*x3*sin(2.0*x3));
+    return f3D;
+}
+
+
 
 
 // ********************************* (linear elements) ******************************************************
 
 
-// ************************************** Create 1D linear meshes ***************************************
+// ******************************* Create a linear Omega description : 1D ************************************
 
 TPZGeoMesh *CreateOmega1D(long num_el, REAL a1, REAL a2)
 {
@@ -141,7 +279,7 @@ TPZGeoMesh *CreateOmega1D(long num_el, REAL a1, REAL a2)
     TPZGeoMesh * gmesh_OneDL = new TPZGeoMesh; // Initilized of TPZGeoMesh class
     
     long geometry_dim = 1; // geometry dimension
-    std::string name("geomesh OneDL"); // geometry name
+    std::string name("geomesh OneD"); // geometry name
     
     gmesh_OneDL->SetName(name);
     gmesh_OneDL->SetDimension(geometry_dim);
@@ -185,10 +323,10 @@ TPZGeoMesh *CreateOmega1D(long num_el, REAL a1, REAL a2)
     gmesh_OneDL->BuildConnectivity(); // Construct mesh neighbor connectivity
     
     
-    std::ofstream outgmeshOneDL("geomesh_OneDL.txt");
+    std::ofstream outgmeshOneDL("geomesh_OneD.txt");
     gmesh_OneDL->Print(outgmeshOneDL);
     
-    std::ofstream vtkgmeshOneDL("geomesh_OneDL.vtk");
+    std::ofstream vtkgmeshOneDL("geomesh_OneD.vtk");
     TPZVTKGeoMesh::PrintGMeshVTK(gmesh_OneDL, vtkgmeshOneDL);
     
     
@@ -197,13 +335,15 @@ TPZGeoMesh *CreateOmega1D(long num_el, REAL a1, REAL a2)
 
 
 
-// ************************************** Create 2D triangle meshes ***************************************
+// ******************************* Create a linear Omega description : 2D ************************************
 
-TPZGeoMesh *CreateTwoDTriGMesh(long nnodes, REAL Lx, REAL Ly)
+TPZGeoMesh *CreateOmega2DTri(long nnodes, REAL a1, REAL a2,REAL b1, REAL b2)
 {
     TPZGeoMesh * gmesh_TwoDTri = new TPZGeoMesh; // Initilized of TPZGeoMesh class
     
     long geometry_dim = 2; // geometry dimension
+    REAL Lx = a2-a1;
+    REAL Ly = b2-b1;
     
     std::string name("geomesh TwoDTri"); // geometry name
     gmesh_TwoDTri->SetName(name);
@@ -215,7 +355,6 @@ TPZGeoMesh *CreateTwoDTriGMesh(long nnodes, REAL Lx, REAL Ly)
     
     
     TPZVec<long> Triangle_topology(3);
-    TPZVec <long> Linear_topology(2);
 
     TPZVec<REAL> coord(3,0.0);
     
@@ -223,11 +362,6 @@ TPZGeoMesh *CreateTwoDTriGMesh(long nnodes, REAL Lx, REAL Ly)
     long elementid = 0;
     int physical_id = 1;
 
-    // Index of boundary element
-    const int bc_bottom = -1; // define id for a material (border bottom)
-    const int bc_right = -2; // define id for a material (border right)
-    const int bc_top = -3; // define id for a material (border top)
-    const int bc_left = -4; // define id for a material (border left)
     
     {
         
@@ -395,96 +529,6 @@ TPZGeoMesh *CreateTwoDTriGMesh(long nnodes, REAL Lx, REAL Ly)
             
         }
     }
-   
-    // bottom
-    {
-        {
-            
-            Linear_topology[0] = 3;
-
-            Linear_topology[1] = 4;
-            
-            new TPZGeoElRefPattern< pzgeom::TPZGeoLinear > (elementid,Linear_topology,bc_bottom,*gmesh_TwoDTri); // create boundary element; bottom
-            elementid++;
-        }
-    
-        {
-
-            Linear_topology[0] = 4;
-            
-            Linear_topology[1] = 6;
-            
-            new TPZGeoElRefPattern< pzgeom::TPZGeoLinear > (elementid,Linear_topology,bc_bottom,*gmesh_TwoDTri); // create boundary element; bottom
-            elementid++;
-        }
-    }
-       // right
-    
-    {
-        {
-
-            Linear_topology[0] = 6;
-            
-            Linear_topology[1] = 0;
-            
-            new TPZGeoElRefPattern< pzgeom::TPZGeoLinear > (elementid,Linear_topology,bc_right,*gmesh_TwoDTri); // create boundary element; right
-            elementid++;
-        }
-        
-        {
-
-            Linear_topology[0] = 0;
-
-            Linear_topology[1] = 8;
-            
-            new TPZGeoElRefPattern< pzgeom::TPZGeoLinear > (elementid,Linear_topology,bc_right,*gmesh_TwoDTri); // create boundary element; right
-            elementid++;
-        }
-    }
-    // top
-    {
-        {
-
-            Linear_topology[0] = 8;
-            
-            Linear_topology[1] = 1;
-            
-            new TPZGeoElRefPattern< pzgeom::TPZGeoLinear > (elementid,Linear_topology,bc_top,*gmesh_TwoDTri); // create boundary element; top
-            elementid++;
-        }
-        
-        {
-            
-            Linear_topology[0] = 1;
-            
-            Linear_topology[1] = 7;
-            
-            new TPZGeoElRefPattern< pzgeom::TPZGeoLinear > (elementid,Linear_topology,bc_top,*gmesh_TwoDTri); // create boundary element; top
-            elementid++;
-        }
-    }
-      // left
-    {
-        {
-
-            Linear_topology[0] = 7;
-
-            Linear_topology[1] = 5;
-            
-            new TPZGeoElRefPattern< pzgeom::TPZGeoLinear > (elementid,Linear_topology,bc_left,*gmesh_TwoDTri); // create boundary element; left
-            elementid++;
-        }
-        
-        {
-
-            Linear_topology[0] = 5;
-            
-            Linear_topology[1] = 3;
-            
-            new TPZGeoElRefPattern< pzgeom::TPZGeoLinear > (elementid,Linear_topology,bc_left,*gmesh_TwoDTri); // create boundary element; left
-            elementid++;
-        }
-    }
     
     // Build the mesh
     gmesh_TwoDTri->BuildConnectivity();
@@ -500,14 +544,18 @@ TPZGeoMesh *CreateTwoDTriGMesh(long nnodes, REAL Lx, REAL Ly)
 
 
 
-// ************************************** Create 2D quadrilateral meshes ***************************************
+// ******************************* Create a linear Omega description : 2D ************************************
 
-TPZGeoMesh *CreateTwoDQuadGMesh(long nnodesqu, REAL Lx, REAL Ly)
+TPZGeoMesh *CreateOmega2DQuad(long nnodesqu, REAL a1, REAL a2,REAL b1, REAL b2)
+
 {
     TPZGeoMesh * gmesh_TwoDQuad = new TPZGeoMesh; // Initilized of TPZGeoMesh class
     
     long geometry_dim = 2; // geometry dimension
+    REAL Lx = a2-a1;
+    REAL Ly = b2-b1;
     
+
     std::string name("geomesh TwoDQuad"); // geometry name
     gmesh_TwoDQuad->SetName(name);
     gmesh_TwoDQuad->SetDimension(geometry_dim);
@@ -518,8 +566,7 @@ TPZGeoMesh *CreateTwoDQuadGMesh(long nnodesqu, REAL Lx, REAL Ly)
     
     TPZVec <long> Quadrilateral_topology(4);
     TPZVec<long> Triangle_topology(3);
-    TPZVec <long> Linear_topology(2);
-    TPZVec<long> point_topology(1);
+
 
     TPZVec<REAL> coord(3,0.0);
     
@@ -527,12 +574,7 @@ TPZGeoMesh *CreateTwoDQuadGMesh(long nnodesqu, REAL Lx, REAL Ly)
 
     long elementid = 0;
     int physical_id = 1;
-    
-    // Index of boundary element
-    const int bc_bottom = -1; // define id for a material (border bottom)
-    const int bc_right = -2; // define id for a material (border right)
-    const int bc_top = -3; // define id for a material (border top)
-    const int bc_left = -4; // define id for a material (border left)
+
     
     
     {
@@ -549,14 +591,14 @@ TPZGeoMesh *CreateTwoDQuadGMesh(long nnodesqu, REAL Lx, REAL Ly)
             coord[0] = Lx; // x coordinate
             coord[1] = Ly; // Y coordinate
             coord[2] = 0.0; // Z coordinate
-            gmesh_TwoDQuad->NodeVec()[1].SetNodeId(9);
+            gmesh_TwoDQuad->NodeVec()[1].SetNodeId(8);
             gmesh_TwoDQuad->NodeVec()[1].SetCoord(coord);
             Quadrilateral_topology[1] = 1;
             
             coord[0] = Lx/2; // x coordinate
             coord[1] = Ly; // Y coordinate
             coord[2] = 0.0; // Z coordinate
-            gmesh_TwoDQuad->NodeVec()[2].SetNodeId(8);
+            gmesh_TwoDQuad->NodeVec()[2].SetNodeId(7);
             gmesh_TwoDQuad->NodeVec()[2].SetCoord(coord);
             Quadrilateral_topology[2] = 2;
             
@@ -625,175 +667,31 @@ TPZGeoMesh *CreateTwoDQuadGMesh(long nnodesqu, REAL Lx, REAL Ly)
             elementid++;
             
         }
-        // 3rd element
-        
+        // 3d element
         {
+            
 
-            Triangle_topology[0] = 3;
+            Quadrilateral_topology[0] = 3; // index
             
-            Triangle_topology[1] = 2;
             
-            coord[0] = Lx/4; // x coordinate
-            coord[1] =0.75*Ly; // Y coordinate
-            coord[2] = 0.0; // Z coordinate
-            gmesh_TwoDQuad->NodeVec()[8].SetNodeId(7);
-            gmesh_TwoDQuad->NodeVec()[8].SetCoord(coord);
-            Triangle_topology[2] = 8;
-            
-            new TPZGeoElRefPattern< pzgeom::TPZGeoTriangle > (elementid,Triangle_topology,physical_id,*gmesh_TwoDQuad); // create triangle element
-            elementid++;
-        }
-        
-        // 4th element
-        
-        {
-            
-            Triangle_topology[0] = 5;
-            
-            Triangle_topology[1] = 8;
+            Quadrilateral_topology[1] = 2;
             
             coord[0] = 0.0; // x coordinate
             coord[1] = Ly; // Y coordinate
             coord[2] = 0.0; // Z coordinate
-            gmesh_TwoDQuad->NodeVec()[9].SetNodeId(6);
-            gmesh_TwoDQuad->NodeVec()[9].SetCoord(coord);
-            Triangle_topology[2] = 9;
+            gmesh_TwoDQuad->NodeVec()[8].SetNodeId(6);
+            gmesh_TwoDQuad->NodeVec()[8].SetCoord(coord);
+            Quadrilateral_topology[2] = 8;
             
-            new TPZGeoElRefPattern< pzgeom::TPZGeoTriangle > (elementid,Triangle_topology,physical_id,*gmesh_TwoDQuad); // create triangle element
+            Quadrilateral_topology[3] = 5;
+            
+            new TPZGeoElRefPattern< pzgeom::TPZGeoQuad > (elementid,Quadrilateral_topology,physical_id,*gmesh_TwoDQuad); // create quadrilateral element
             elementid++;
+            
         }
-        
-        // 5th element
-        
-        {
-            
-            Triangle_topology[0] = 3;
-            
-            Triangle_topology[1] = 8;
-
-            Triangle_topology[2] = 5;
-            
-            new TPZGeoElRefPattern< pzgeom::TPZGeoTriangle > (elementid,Triangle_topology,physical_id,*gmesh_TwoDQuad); // create triangle element
-            elementid++;
-        }
-        
-        // 6th element
-        
-        {
-            
-            Triangle_topology[0] = 8;
-            
-            Triangle_topology[1] = 9;
-            
-            Triangle_topology[2] = 2;
-            
-            new TPZGeoElRefPattern< pzgeom::TPZGeoTriangle > (elementid,Triangle_topology,physical_id,*gmesh_TwoDQuad); // create triangle element
-            elementid++;
-        }
-        
-        // 7th element point
-        
-        {
-
-            point_topology[0] = 3;
-            new TPZGeoElRefPattern< pzgeom::TPZGeoPoint> (elementid, point_topology, physical_id, *gmesh_TwoDQuad); //create point element
-            elementid++;
-
-        }
-
     }
         
-        // bottom
-        {
-            {
-                
-                Linear_topology[0] = 6;
-                
-                Linear_topology[1] = 4;
-                
-                new TPZGeoElRefPattern< pzgeom::TPZGeoLinear > (elementid,Linear_topology,bc_bottom,*gmesh_TwoDQuad); // create boundary element; bottom
-                elementid++;
-            }
-            
-            {
-                
-                Linear_topology[0] = 4;
-                
-                Linear_topology[1] = 7;
-                
-                new TPZGeoElRefPattern< pzgeom::TPZGeoLinear > (elementid,Linear_topology,bc_bottom,*gmesh_TwoDQuad); // create boundary element; bottom
-                elementid++;
-            }
-        }
-        // right
-        
-        {
-            {
-                
-                Linear_topology[0] = 7;
-                
-                Linear_topology[1] = 0;
-                
-                new TPZGeoElRefPattern< pzgeom::TPZGeoLinear > (elementid,Linear_topology,bc_right,*gmesh_TwoDQuad); // create boundary element; right
-                elementid++;
-            }
-            
-            {
-                
-                Linear_topology[0] = 0;
-                
-                Linear_topology[1] = 1;
-                
-                new TPZGeoElRefPattern< pzgeom::TPZGeoLinear > (elementid,Linear_topology,bc_right,*gmesh_TwoDQuad); // create boundary element; right
-                elementid++;
-            }
-        }
-        // top
-        {
-            {
-                
-                Linear_topology[0] = 1;
-                
-                Linear_topology[1] = 2;
-                
-                new TPZGeoElRefPattern< pzgeom::TPZGeoLinear > (elementid,Linear_topology,bc_top,*gmesh_TwoDQuad); // create boundary element; top
-                elementid++;
-            }
-            
-            {
-                
-                Linear_topology[0] = 2;
-                
-                Linear_topology[1] = 9;
-                
-                new TPZGeoElRefPattern< pzgeom::TPZGeoLinear > (elementid,Linear_topology,bc_top,*gmesh_TwoDQuad); // create boundary element; top
-                elementid++;
-            }
-        }
-        // left
-        {
-            {
-                
-                Linear_topology[0] = 9;
-                
-                Linear_topology[1] = 5;
-                
-                new TPZGeoElRefPattern< pzgeom::TPZGeoLinear > (elementid,Linear_topology,bc_left,*gmesh_TwoDQuad); // create boundary element; left
-                elementid++;
-            }
-            
-            {
-                
-                Linear_topology[0] = 5;
-                
-                Linear_topology[1] = 6;
-                
-                new TPZGeoElRefPattern< pzgeom::TPZGeoLinear > (elementid,Linear_topology,bc_left,*gmesh_TwoDQuad); // create boundary element; left
-                elementid++;
-            }
-        }
-
-        
+    
         // Build the mesh
         gmesh_TwoDQuad->BuildConnectivity();
         
@@ -809,25 +707,26 @@ TPZGeoMesh *CreateTwoDQuadGMesh(long nnodesqu, REAL Lx, REAL Ly)
     }
    
 
-// ************************************** Create 3D hexahedral and prism meshes ***************************************
+// ******************************* Create a linear Omega description : 3D ************************************
 
-
-TPZGeoMesh *CreateThreeDHexPrytetGMesh(long nnodesthrhpt, REAL Lx, REAL Ly, REAL Lz)
+TPZGeoMesh *CreateOmega3DHexa(long nnodeshexa, REAL a1, REAL a2,REAL b1, REAL b2, REAL c1, REAL c2)
 {
     TPZGeoMesh * gmesh_ThreeDHexPrytet = new TPZGeoMesh; // Initilized of TPZGeoMesh class
     
     long geometry_dim = 3; // geometry dimension
-    
-    std::string name("geomesh ThreeDHexPrytet"); // geometry name
+    REAL Lx = a2-a1;
+    REAL Ly = b2-b1;
+    REAL Lz = c2-c1;
+
+    std::string name("geomesh ThreeDHexa"); // geometry name
     gmesh_ThreeDHexPrytet->SetName(name);
     gmesh_ThreeDHexPrytet->SetDimension(geometry_dim);
     
     
-    gmesh_ThreeDHexPrytet->NodeVec().Resize(nnodesthrhpt); // Resize of the geometry mesh
-    TPZVec<TPZGeoNode> Node(nnodesthrhpt);
+    gmesh_ThreeDHexPrytet->NodeVec().Resize(nnodeshexa); // Resize of the geometry mesh
+    TPZVec<TPZGeoNode> Node(nnodeshexa);
     
     TPZVec<long> Hexahedron_topology(8);
-    TPZVec <long> Quadrilateral_topology(4);
     
     TPZVec<REAL> coord(3,0.0);
     
@@ -835,46 +734,40 @@ TPZGeoMesh *CreateThreeDHexPrytetGMesh(long nnodesthrhpt, REAL Lx, REAL Ly, REAL
     
     long elementid = 0;
     int physical_id = 1;
-    
-    // Index of boundary element
-    const int bc_front = -1; // define id for a material (border in front)
-    const int bc_right = -2; // define id for a material (border right)
-    const int bc_back = -3; // define id for a material (border back)
-    const int bc_left = -4; // define id for a material (border left)
-    const int bc_bottom = -5; // define id for a material (border bottom)
-    const int bc_top = -6; // define id for a material (border top)
+
     
     // 0th element
     
     {
         
         // 0th node
-        coord[0] = Lx; // x coordinate
-        coord[1] = Ly; // Y coordinate
+        coord[0] = 0.0; // x coordinate
+        coord[1] = 0.0; // Y coordinate
         coord[2] = 0.0; // Z coordinate
         gmesh_ThreeDHexPrytet->NodeVec()[0].SetNodeId(0);
         gmesh_ThreeDHexPrytet->NodeVec()[0].SetCoord(coord);
         Hexahedron_topology[0] = 0;
         
+        
         // 1st node
         coord[0] = Lx; // x coordinate
-        coord[1] = Ly; // Y coordinate
-        coord[2] = Lz/2; // Z coordinate
+        coord[1] = 0.0; // Y coordinate
+        coord[2] = 0.0; // Z coordinate
         gmesh_ThreeDHexPrytet->NodeVec()[1].SetNodeId(1);
         gmesh_ThreeDHexPrytet->NodeVec()[1].SetCoord(coord);
         Hexahedron_topology[1] = 1;
         
         // 2nd node
         coord[0] = Lx; // x coordinate
-        coord[1] = 0.0; // Y coordinate
-        coord[2] = Lz/2; // Z coordinate
+        coord[1] = Ly; // Y coordinate
+        coord[2] = 0.0; // Z coordinate
         gmesh_ThreeDHexPrytet->NodeVec()[2].SetNodeId(2);
         gmesh_ThreeDHexPrytet->NodeVec()[2].SetCoord(coord);
         Hexahedron_topology[2] = 2;
         
         // 3rd node
-        coord[0] = Lx; // x coordinate
-        coord[1] = 0.0; // Y coordinate
+        coord[0] = 0.0; // x coordinate
+        coord[1] = Ly; // Y coordinate
         coord[2] = 0.0; // Z coordinate
         gmesh_ThreeDHexPrytet->NodeVec()[3].SetNodeId(3);
         gmesh_ThreeDHexPrytet->NodeVec()[3].SetCoord(coord);
@@ -882,23 +775,23 @@ TPZGeoMesh *CreateThreeDHexPrytetGMesh(long nnodesthrhpt, REAL Lx, REAL Ly, REAL
         
         // 4th node
         coord[0] = 0.0; // x coordinate
-        coord[1] = Ly; // Y coordinate
-        coord[2] = 0.0; // Z coordinate
+        coord[1] = 0.0; // Y coordinate
+        coord[2] = Lz/2; // Z coordinate
         gmesh_ThreeDHexPrytet->NodeVec()[4].SetNodeId(4);
         gmesh_ThreeDHexPrytet->NodeVec()[4].SetCoord(coord);
         Hexahedron_topology[4] = 4;
         
         // 5th node
-        coord[0] = 0.0; // x coordinate
-        coord[1] = Ly; // Y coordinate
+        coord[0] = Lx; // x coordinate
+        coord[1] = 0.0; // Y coordinate
         coord[2] = Lz/2; // Z coordinate
         gmesh_ThreeDHexPrytet->NodeVec()[5].SetNodeId(5);
         gmesh_ThreeDHexPrytet->NodeVec()[5].SetCoord(coord);
         Hexahedron_topology[5] = 5;
         
         // 6th node
-        coord[0] = 0.0; // x coordinate
-        coord[1] = 0.0; // Y coordinate
+        coord[0] = Lx; // x coordinate
+        coord[1] = Ly; // Y coordinate
         coord[2] = Lz/2; // Z coordinate
         gmesh_ThreeDHexPrytet->NodeVec()[6].SetNodeId(6);
         gmesh_ThreeDHexPrytet->NodeVec()[6].SetCoord(coord);
@@ -906,11 +799,12 @@ TPZGeoMesh *CreateThreeDHexPrytetGMesh(long nnodesthrhpt, REAL Lx, REAL Ly, REAL
         
         // 7th node
         coord[0] = 0.0; // x coordinate
-        coord[1] = 0.0; // Y coordinate
-        coord[2] = 0.0; // Z coordinate
+        coord[1] = Ly; // Y coordinate
+        coord[2] = Lz/2; // Z coordinate
         gmesh_ThreeDHexPrytet->NodeVec()[7].SetNodeId(7);
         gmesh_ThreeDHexPrytet->NodeVec()[7].SetCoord(coord);
         Hexahedron_topology[7] = 7;
+
         
         new TPZGeoElRefPattern< pzgeom::TPZGeoCube> (elementid, Hexahedron_topology, physical_id, *gmesh_ThreeDHexPrytet);
         elementid++;
@@ -921,233 +815,65 @@ TPZGeoMesh *CreateThreeDHexPrytetGMesh(long nnodesthrhpt, REAL Lx, REAL Ly, REAL
     
     {
         
+        // oth node
+        Hexahedron_topology[0] = 4;
+        
         // 1st node
-        Hexahedron_topology[0] = 1;
+        Hexahedron_topology[1] = 5;
         
         // 2nd node
-        coord[0] = Lx; // x coordinate
-        coord[1] = Ly; // Y coordinate
+        Hexahedron_topology[2] = 6;
+        
+        // 3rd node
+        Hexahedron_topology[3] = 7;
+        
+        // 4th node
+        coord[0] = 0.0; // x coordinate
+        coord[1] = 0.0; // Y coordinate
         coord[2] = Lz; // Z coordinate
         gmesh_ThreeDHexPrytet->NodeVec()[8].SetNodeId(8);
         gmesh_ThreeDHexPrytet->NodeVec()[8].SetCoord(coord);
-        Hexahedron_topology[1] = 8;
+        Hexahedron_topology[4] = 8;
         
-        // 3rd node
+        // 5th node
         coord[0] = Lx; // x coordinate
         coord[1] = 0.0; // Y coordinate
         coord[2] = Lz; // Z coordinate
         gmesh_ThreeDHexPrytet->NodeVec()[9].SetNodeId(9);
         gmesh_ThreeDHexPrytet->NodeVec()[9].SetCoord(coord);
-        Hexahedron_topology[2] = 9;
-        
-        // 4th node
-        Hexahedron_topology[3] = 2;
-        
-        // 5th node
-        Hexahedron_topology[4] = 5;
+        Hexahedron_topology[5] = 9;
         
         // 6th node
-        coord[0] = 0.0; // x coordinate
+        coord[0] = Lx; // x coordinate
         coord[1] = Ly; // Y coordinate
         coord[2] = Lz; // Z coordinate
         gmesh_ThreeDHexPrytet->NodeVec()[10].SetNodeId(10);
         gmesh_ThreeDHexPrytet->NodeVec()[10].SetCoord(coord);
-        Hexahedron_topology[5] = 10;
+        Hexahedron_topology[6] = 10;
+        
         
         // 7th node
         coord[0] = 0.0; // x coordinate
-        coord[1] = 0.0; // Y coordinate
+        coord[1] = Ly; // Y coordinate
         coord[2] = Lz; // Z coordinate
         gmesh_ThreeDHexPrytet->NodeVec()[11].SetNodeId(11);
         gmesh_ThreeDHexPrytet->NodeVec()[11].SetCoord(coord);
-        Hexahedron_topology[6] = 11;
+        Hexahedron_topology[7] = 11;
         
-        // 8th node
-        Hexahedron_topology[7] = 6;
         
         new TPZGeoElRefPattern< pzgeom::TPZGeoCube> (elementid, Hexahedron_topology, physical_id, *gmesh_ThreeDHexPrytet);
         elementid++;
         
     }
     
-    // ********************* boundary ****************
-    
-    // in front
-    {
-        {
-            
-            Quadrilateral_topology[0] = 0;
-            
-            Quadrilateral_topology[1] = 1;
-            
-            Quadrilateral_topology[2] = 2;
-            
-            Quadrilateral_topology[3] = 3;
-            
-            new TPZGeoElRefPattern< pzgeom::TPZGeoQuad > (elementid,Quadrilateral_topology,bc_front,*gmesh_ThreeDHexPrytet); // create boundary element; in front
-            elementid++;
-            
-        }
-        {
-            
-            Quadrilateral_topology[0] = 1;
-            
-            Quadrilateral_topology[1] = 8;
-            
-            Quadrilateral_topology[2] = 9;
-            
-            Quadrilateral_topology[3] = 2;
-            
-            new TPZGeoElRefPattern< pzgeom::TPZGeoQuad > (elementid,Quadrilateral_topology,bc_front,*gmesh_ThreeDHexPrytet); // create boundary element; in front
-            elementid++;
-            
-        }
-        
-    }
-    
-
-    // right
-    {
-        {
-            
-            Quadrilateral_topology[0] = 4;
-            
-            Quadrilateral_topology[1] = 5;
-            
-            Quadrilateral_topology[2] = 1;
-            
-            Quadrilateral_topology[3] = 0;
-            
-            new TPZGeoElRefPattern< pzgeom::TPZGeoQuad > (elementid,Quadrilateral_topology,bc_right,*gmesh_ThreeDHexPrytet); // create boundary element; right
-            elementid++;
-            
-        }
-        {
-            
-            Quadrilateral_topology[0] = 5;
-            
-            Quadrilateral_topology[1] = 10;
-            
-            Quadrilateral_topology[2] = 8;
-            
-            Quadrilateral_topology[3] = 1;
-            
-            new TPZGeoElRefPattern< pzgeom::TPZGeoQuad > (elementid,Quadrilateral_topology,bc_right,*gmesh_ThreeDHexPrytet); // create boundary element; right
-            elementid++;
-            
-        }
-        
-    }
-    
-    // back
-    {
-        {
-            
-            Quadrilateral_topology[0] = 4;
-            
-            Quadrilateral_topology[1] = 5;
-            
-            Quadrilateral_topology[2] = 6;
-            
-            Quadrilateral_topology[3] = 7;
-            
-            new TPZGeoElRefPattern< pzgeom::TPZGeoQuad > (elementid,Quadrilateral_topology,bc_back,*gmesh_ThreeDHexPrytet); // create boundary element; back
-            elementid++;
-            
-        }
-        {
-            
-            Quadrilateral_topology[0] = 5;
-            
-            Quadrilateral_topology[1] = 10;
-            
-            Quadrilateral_topology[2] = 11;
-            
-            Quadrilateral_topology[3] = 6;
-            
-            new TPZGeoElRefPattern< pzgeom::TPZGeoQuad > (elementid,Quadrilateral_topology,bc_back,*gmesh_ThreeDHexPrytet); // create boundary element; back
-            elementid++;
-            
-        }
-        
-    }
-    
-    // left
-    {
-        {
-            
-            Quadrilateral_topology[0] = 7;
-            
-            Quadrilateral_topology[1] = 6;
-            
-            Quadrilateral_topology[2] = 2;
-            
-            Quadrilateral_topology[3] = 3;
-            
-            new TPZGeoElRefPattern< pzgeom::TPZGeoQuad > (elementid,Quadrilateral_topology,bc_left,*gmesh_ThreeDHexPrytet); // create boundary element; left
-            elementid++;
-            
-        }
-        {
-            
-            Quadrilateral_topology[0] = 6;
-            
-            Quadrilateral_topology[1] = 11;
-            
-            Quadrilateral_topology[2] = 9;
-            
-            Quadrilateral_topology[3] = 2;
-            
-            new TPZGeoElRefPattern< pzgeom::TPZGeoQuad > (elementid,Quadrilateral_topology,bc_left,*gmesh_ThreeDHexPrytet); // create boundary element; left
-            elementid++;
-            
-        }
-        
-    }
-    
-    
-    
-    // bottom
-
-    {
-            
-            Quadrilateral_topology[0] = 0;
-            
-            Quadrilateral_topology[1] = 4;
-            
-            Quadrilateral_topology[2] = 7;
-            
-            Quadrilateral_topology[3] = 3;
-            
-            new TPZGeoElRefPattern< pzgeom::TPZGeoQuad > (elementid,Quadrilateral_topology,bc_bottom,*gmesh_ThreeDHexPrytet); // create boundary element; bottom
-            elementid++;
-            
-   }
-    
-    
-    // top
-   {
-            
-            Quadrilateral_topology[0] = 8;
-            
-            Quadrilateral_topology[1] = 10;
-            
-            Quadrilateral_topology[2] = 11;
-            
-            Quadrilateral_topology[3] = 9;
-            
-            new TPZGeoElRefPattern< pzgeom::TPZGeoQuad > (elementid,Quadrilateral_topology,bc_top,*gmesh_ThreeDHexPrytet); // create boundary element; top
-            elementid++;
-            
-   }
 
     
     // Build the mesh
     gmesh_ThreeDHexPrytet->BuildConnectivity();
-    std::ofstream outgmeshThreeDHexPrytet("geomesh_ThreeDHexPrytet.txt");
+    std::ofstream outgmeshThreeDHexPrytet("geomesh_ThreeDHexa.txt");
     gmesh_ThreeDHexPrytet->Print(outgmeshThreeDHexPrytet);
     
-    std::ofstream vtkgmeshThreeDHexPrytet("geomesh_ThreeDHexPrytet.vtk");
+    std::ofstream vtkgmeshThreeDHexPrytet("geomesh_ThreeDHexa.vtk");
     TPZVTKGeoMesh::PrintGMeshVTK(gmesh_ThreeDHexPrytet, vtkgmeshThreeDHexPrytet);
     
     return gmesh_ThreeDHexPrytet;
