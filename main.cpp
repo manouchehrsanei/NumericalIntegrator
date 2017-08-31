@@ -3,6 +3,7 @@
 #include <cmath>
 #include <fstream>
 
+
 #include "pzreal.h"
 
 #include "pzgmesh.h"
@@ -14,6 +15,8 @@
 #include "TPZGeoCube.h"
 
 #include "TPZVTKGeoMesh.h"
+
+#include "TPZGmshReader.h"
 
 
 
@@ -33,13 +36,25 @@ TPZGeoMesh *CreateOmega2DQuad(long nnodesqu, REAL a1, REAL a2,REAL b1, REAL b2);
 TPZGeoMesh *CreateOmega3DHexa(long nnodeshexa, REAL a1, REAL a2,REAL b1, REAL b2, REAL c1, REAL c2);
 
 
-
 // ************************************************ (Example Functions) ****************************************
 
 REAL f_1D(TPZManVector<REAL,3> &x);
 REAL f_2D(TPZManVector<REAL,3> &x);
 REAL f_3D(TPZManVector<REAL,3> &x);
 
+
+// ************************************************** (From Gmsh) ***********************************************
+
+TPZGeoMesh *CreateOneDCircleGMesh();
+TPZGeoMesh *CreateTwoDCircleGMesh();
+TPZGeoMesh *CreateTwoDSphereGMesh();
+TPZGeoMesh *CreateThreeDSphereGMesh();
+
+
+void IntegrateOneCirGeometry(TPZGeoMesh * OmegaOneCir, int order);
+void IntegrateTwoCirGeometry(TPZGeoMesh * OmegaTwoCir, int order);
+void IntegrateTwoSpheGeometry(TPZGeoMesh * OmegaTwoSphe, int order);
+void IntegrateThreeSpheGeometry(TPZGeoMesh * OmegaThreeSphe, int order);
 
 
 
@@ -48,163 +63,52 @@ REAL f_3D(TPZManVector<REAL,3> &x);
 
 int main() {
 
-    // ******************************************** (1D) ***********************************************
-
-//    
-//    int order = 10;
-//    long num_el = 1;
-//    REAL a1 = 0.0;
-//    REAL a2 = 10.0;
-//    TPZGeoMesh * Omega = CreateOmega1D(num_el, a1, a2);
-//    long n_elements = Omega->NElements();
-//
-//    REAL NumericalIntegral = 0.0;
-//    
-//    for (long iel = 0; iel < n_elements; iel++)
-//    { // for a all element in the mesh
-//    
-//        TPZGeoEl * element = Omega->Element(iel);
-//        int itself = element->NSides() - 1;
-//        TPZIntPoints * IntegrationRule = element->CreateSideIntegrationRule(itself, order);
-//        int n_points = IntegrationRule ->NPoints();
-//        
-//        TPZManVector<REAL,3> x;
-//        TPZManVector<REAL,3> par_space;
-//        REAL w, detjac;
-//        TPZFMatrix<REAL> jac, jacinv, axes;
-//        
-//        for (int ip = 0; ip < n_points; ip++)
-//        {
-//            IntegrationRule->Point(ip, par_space, w);
-//            
-//            element->X(par_space, x);
-//            element->Jacobian(par_space, jac, axes, detjac, jacinv);
-//            
-//            NumericalIntegral += w * detjac * (1.0);
-//        }
-//    }
-//        
-//    std::cout << "Numerical integration = " << NumericalIntegral << std::endl;
-    
-    // ******************************************** (2D) ***********************************************
-    
-//    
-//    int order = 20;
-//    long nnodes = 9;
-//    long num_el = nnodes-1;
-//    REAL a1 = 0.0;
-//    REAL a2 = 10.0;
-//    REAL b1 = 0.0;
-//    REAL b2 = 10.0;
-//
-//    TPZGeoMesh * Omega = CreateOmega2DTri(nnodes, a1, a2, b1, b2);
-//    long n_elements = Omega->NElements();
-//    
-//    REAL NumericalIntegral = 0.0;
-//    
-//    for (long iel = 0; iel < n_elements; iel++)
-//    { // for a all element in the mesh
-//        
-//        TPZGeoEl * element = Omega->Element(iel);
-//        int itself = element->NSides() - 1;
-//        
-//        TPZIntPoints * IntegrationRule = element->CreateSideIntegrationRule(itself, order);
-//        int n_points = IntegrationRule ->NPoints();
-//        
-//        TPZManVector<REAL,3> x;
-//
-//        TPZManVector<REAL,3> par_space;
-//        REAL w, detjac;
-//        TPZFMatrix<REAL> jac, jacinv, axes;
-//        
-//        for (int ip = 0; ip < n_points; ip++)
-//        {
-//            IntegrationRule->Point(ip, par_space, w);
-//            
-//            element->X(par_space, x);
-//            element->Jacobian(par_space, jac, axes, detjac, jacinv);
-//            
-//            NumericalIntegral += w * detjac * (f_2D(x));
-//        }
-//    }
-//    
-//    std::cout << "Numerical integration = " << NumericalIntegral << std::endl;
-    
-   
-// -------------------------------- 2D Quad -------------
-//
-//    int order = 15;
-//    long nnodesqu = 9;
-//    long num_el = nnodesqu/2;
-//    REAL a1 = 0.0;
-//    REAL a2 = 10.0;
-//    REAL b1 = 0.0;
-//    REAL b2 = 10.0;
-//    
-//    TPZGeoMesh * Omega = CreateOmega2DQuad(nnodesqu, a1, a2, b1, b2);
-//    long n_elements = Omega->NElements();
-//    
-//    REAL NumericalIntegral = 0.0;
-//    
-//    for (long iel = 0; iel < n_elements; iel++)
-//    { // for a all element in the mesh
-//        
-//        TPZGeoEl * element = Omega->Element(iel);
-//        int itself = element->NSides() - 1;
-//        
-//        TPZIntPoints * IntegrationRule = element->CreateSideIntegrationRule(itself, order);
-//        int n_points = IntegrationRule ->NPoints();
-//        
-//        TPZManVector<REAL,3> x;
-//        
-//        TPZManVector<REAL,3> par_space;
-//        REAL w, detjac;
-//        TPZFMatrix<REAL> jac, jacinv, axes;
-//        
-//        for (int ip = 0; ip < n_points; ip++)
-//        {
-//            IntegrationRule->Point(ip, par_space, w);
-//            
-//            element->X(par_space, x);
-//            element->Jacobian(par_space, jac, axes, detjac, jacinv);
-//            
-//            NumericalIntegral += w * detjac * (f_2D(x));
-//        }
-//    }
-//    
-//    std::cout << "Numerical integration = " << NumericalIntegral << std::endl;
-//    
-    
-    
-    // ******************************************** (3D) ***********************************************
 
     
-    int order = 20;
-    long nnodeshexa = 12;
-    long num_el = nnodeshexa/6;
-    REAL a1 = 0.0;
-    REAL a2 = 10.0;
-    REAL b1 = 0.0;
-    REAL b2 = 10.0;
-    REAL c1 = 0.0;
-    REAL c2 = 10.0;
+    int order = 10;
     
-    TPZGeoMesh * Omega = CreateOmega3DHexa(nnodeshexa, a1, a2, b1, b2, c1, c2);
-    long n_elements = Omega->NElements();
+//    TPZGeoMesh * OmegaOneCir = CreateOneDCircleGMesh();
+//    IntegrateOneCirGeometry(OmegaOneCir, order);
     
+//    TPZGeoMesh * OmegaTwoCir = CreateTwoDCircleGMesh();
+//    IntegrateTwoCirGeometry(OmegaTwoCir, order);
+//
+//    TPZGeoMesh * OmegaTwoSphe = CreateTwoDSphereGMesh();
+//    IntegrateTwoSpheGeometry(OmegaTwoSphe, order);
+
+    TPZGeoMesh * OmegaThreeSphe = CreateThreeDSphereGMesh();
+    IntegrateThreeSpheGeometry(OmegaThreeSphe, order);
+
+
+    
+    
+    return 0;
+}
+
+
+// ++++++++++++++++++++++++++++++++++++++++++++ functions +++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+void IntegrateOneCirGeometry(TPZGeoMesh * OmegaOneCir, int order){
+    
+    
+    //    long num_el = 1;
+    //    REAL a1 = 0.0;
+    //    REAL a2 = 10.0;
+    //    TPZGeoMesh * Omega = CreateOmega1D(num_el, a1, a2);
+
+    long n_elements = OmegaOneCir->NElements();
     REAL NumericalIntegral = 0.0;
     
     for (long iel = 0; iel < n_elements; iel++)
     { // for a all element in the mesh
         
-        TPZGeoEl * element = Omega->Element(iel);
+        TPZGeoEl * element = OmegaOneCir->Element(iel);
         int itself = element->NSides() - 1;
-        
         TPZIntPoints * IntegrationRule = element->CreateSideIntegrationRule(itself, order);
         int n_points = IntegrationRule ->NPoints();
         
         TPZManVector<REAL,3> x;
-        
         TPZManVector<REAL,3> par_space;
         REAL w, detjac;
         TPZFMatrix<REAL> jac, jacinv, axes;
@@ -216,20 +120,169 @@ int main() {
             element->X(par_space, x);
             element->Jacobian(par_space, jac, axes, detjac, jacinv);
             
-            NumericalIntegral += w * detjac * (f_3D(x));
+            NumericalIntegral += w * detjac * (1.0);
         }
     }
     
     std::cout << "Numerical integration = " << NumericalIntegral << std::endl;
-    
-    
-    return 0;
 }
 
+// ----------------------------------------------------------------------------------------
 
 
+void IntegrateTwoCirGeometry(TPZGeoMesh * OmegaTwoCir, int order){
+    
+    
+//        int order = 20;
+//        long nnodes = 9;
+//        long num_el = nnodes-1;
+//        REAL a1 = 0.0;
+//        REAL a2 = 10.0;
+//        REAL b1 = 0.0;
+//        REAL b2 = 10.0;
+//    
+//        TPZGeoMesh * Omega = CreateOmega2DTri(nnodes, a1, a2, b1, b2);
+    
+        long n_elements = OmegaTwoCir->NElements();
 
-// ++++++++++++++++++++++++++++++++++++++++++++ functions +++++++++++++++++++++++++++++++++++++++++++++++++++
+        REAL NumericalIntegral = 0.0;
+    
+        for (long iel = 0; iel < n_elements; iel++)
+        { // for a all element in the mesh
+    
+            TPZGeoEl * element = OmegaTwoCir->Element(iel);
+            int itself = element->NSides() - 1;
+    
+            TPZIntPoints * IntegrationRule = element->CreateSideIntegrationRule(itself, order);
+            int n_points = IntegrationRule ->NPoints();
+    
+            TPZManVector<REAL,3> x;
+    
+            TPZManVector<REAL,3> par_space;
+            REAL w, detjac;
+            TPZFMatrix<REAL> jac, jacinv, axes;
+    
+            for (int ip = 0; ip < n_points; ip++)
+            {
+                IntegrationRule->Point(ip, par_space, w);
+    
+                element->X(par_space, x);
+                element->Jacobian(par_space, jac, axes, detjac, jacinv);
+    
+//                NumericalIntegral += w * detjac * (f_2D(x));
+                NumericalIntegral += w * detjac * (1);
+
+            }
+        }
+        
+        std::cout << "Numerical integration = " << NumericalIntegral << std::endl;
+    
+}
+
+// ----------------------------------------------------------------------------------------
+
+
+void IntegrateTwoSpheGeometry(TPZGeoMesh * OmegaTwoSphe, int order){
+    
+    //    int order = 15;
+    //    long nnodesqu = 9;
+    //    long num_el = nnodesqu/2;
+    //    REAL a1 = 0.0;
+    //    REAL a2 = 10.0;
+    //    REAL b1 = 0.0;
+    //    REAL b2 = 10.0;
+    //
+    //    TPZGeoMesh * Omega = CreateOmega2DQuad(nnodesqu, a1, a2, b1, b2);
+    
+        long n_elements = OmegaTwoSphe->NElements();
+    
+        REAL NumericalIntegral = 0.0;
+    
+        for (long iel = 0; iel < n_elements; iel++)
+        { // for a all element in the mesh
+    
+            TPZGeoEl * element = OmegaTwoSphe->Element(iel);
+            int itself = element->NSides() - 1;
+    
+            TPZIntPoints * IntegrationRule = element->CreateSideIntegrationRule(itself, order);
+            int n_points = IntegrationRule ->NPoints();
+    
+            TPZManVector<REAL,3> x;
+    
+            TPZManVector<REAL,3> par_space;
+            REAL w, detjac;
+            TPZFMatrix<REAL> jac, jacinv, axes;
+    
+            for (int ip = 0; ip < n_points; ip++)
+            {
+                IntegrationRule->Point(ip, par_space, w);
+    
+                element->X(par_space, x);
+                element->Jacobian(par_space, jac, axes, detjac, jacinv);
+    
+//                NumericalIntegral += w * detjac * (f_3D(x));
+                NumericalIntegral += w * detjac * (1);
+
+            }
+        }
+        
+        std::cout << "Numerical integration = " << NumericalIntegral << std::endl;
+    
+}
+
+// ----------------------------------------------------------------------------------------
+
+void IntegrateThreeSpheGeometry(TPZGeoMesh * OmegaThreeSphe, int order){
+    
+    //
+    //    int order = 20;
+    //    long nnodeshexa = 12;
+    //    long num_el = nnodeshexa/6;
+    //    REAL a1 = 0.0;
+    //    REAL a2 = 10.0;
+    //    REAL b1 = 0.0;
+    //    REAL b2 = 10.0;
+    //    REAL c1 = 0.0;
+    //    REAL c2 = 10.0;
+    //
+    //    TPZGeoMesh * Omega = CreateOmega3DHexa(nnodeshexa, a1, a2, b1, b2, c1, c2);
+    
+        long n_elements = OmegaThreeSphe->NElements();
+    
+        REAL NumericalIntegral = 0.0;
+    
+        for (long iel = 0; iel < n_elements; iel++)
+        { // for a all element in the mesh
+    
+            TPZGeoEl * element = OmegaThreeSphe->Element(iel);
+            int itself = element->NSides() - 1;
+    
+            TPZIntPoints * IntegrationRule = element->CreateSideIntegrationRule(itself, order);
+            int n_points = IntegrationRule ->NPoints();
+    
+            TPZManVector<REAL,3> x;
+    
+            TPZManVector<REAL,3> par_space;
+            REAL w, detjac;
+            TPZFMatrix<REAL> jac, jacinv, axes;
+    
+            for (int ip = 0; ip < n_points; ip++)
+            {
+                IntegrationRule->Point(ip, par_space, w);
+    
+                element->X(par_space, x);
+                element->Jacobian(par_space, jac, axes, detjac, jacinv);
+    
+//                NumericalIntegral += w * detjac * (f_3D(x));
+                NumericalIntegral += w * detjac * (1);
+
+            }
+        }
+        
+        std::cout << "Numerical integration = " << NumericalIntegral << std::endl;
+
+}
+
 
 // ------------------------------------------ 1D -------------
 
@@ -881,3 +934,123 @@ TPZGeoMesh *CreateOmega3DHexa(long nnodeshexa, REAL a1, REAL a2,REAL b1, REAL b2
 }
 
 // ----------------------------------------------------------------------------------------
+
+
+TPZGeoMesh *CreateOneDCircleGMesh()
+{
+    
+    // Creating geometric mesh
+    
+    TPZGeoMesh *gmesh_OneDCircle = new TPZGeoMesh();
+    
+    // Implementation meshes with GMSH
+    
+    std::string grid = "1DCircle.msh";
+    
+    TPZGmshReader Geometry;
+    REAL s = 1.0;
+    Geometry.SetfDimensionlessL(s);
+    
+    gmesh_OneDCircle = Geometry.GeometricGmshMesh(grid);
+    const std::string name("OneDCircle from gmsh script");
+    gmesh_OneDCircle->SetName(name);
+    
+    std::ofstream outgmeshOneDCircle("geomesh_OneDCircle.txt");
+    gmesh_OneDCircle->Print(outgmeshOneDCircle);
+    
+    std::ofstream vtkgmeshOneDCircle("geomesh_OneDCircle.vtk");
+    TPZVTKGeoMesh::PrintGMeshVTK(gmesh_OneDCircle, vtkgmeshOneDCircle);
+    return gmesh_OneDCircle;
+    
+}
+
+// ----------------------------------------------------------------------------------------
+
+
+TPZGeoMesh *CreateTwoDCircleGMesh()
+{
+    
+    // Creating geometric mesh
+    
+    TPZGeoMesh *gmesh_TwoDCircle = new TPZGeoMesh();
+    
+    // Implementation meshes with GMSH
+    
+    std::string grid = "2DCircle.msh";
+    
+    TPZGmshReader Geometry;
+    REAL s = 1.0;
+    Geometry.SetfDimensionlessL(s);
+    
+    gmesh_TwoDCircle = Geometry.GeometricGmshMesh(grid);
+    const std::string name("TwoDCircle from gmsh script");
+    gmesh_TwoDCircle->SetName(name);
+    
+    std::ofstream outgmeshTwoDCircle("geomesh_TwoDCircle.txt");
+    gmesh_TwoDCircle->Print(outgmeshTwoDCircle);
+    
+    std::ofstream vtkgmeshTwoDCircle("geomesh_TwoDCircle.vtk");
+    TPZVTKGeoMesh::PrintGMeshVTK(gmesh_TwoDCircle, vtkgmeshTwoDCircle);
+    return gmesh_TwoDCircle;
+    
+}
+
+// ----------------------------------------------------------------------------------------
+
+
+TPZGeoMesh *CreateTwoDSphereGMesh()
+{
+    
+    // Creating geometric mesh
+    
+    TPZGeoMesh *gmesh_TwoDSphere = new TPZGeoMesh();
+    
+    // Implementation meshes with GMSH
+    
+    std::string grid = "2DSphere.msh";
+    
+    TPZGmshReader Geometry;
+    REAL s = 1.0;
+    Geometry.SetfDimensionlessL(s);
+    
+    gmesh_TwoDSphere = Geometry.GeometricGmshMesh(grid);
+    const std::string name("TwoDSphere from gmsh script");
+    gmesh_TwoDSphere->SetName(name);
+    
+    std::ofstream outgmeshTwoDSphere("geomesh_TwoDSphere.txt");
+    gmesh_TwoDSphere->Print(outgmeshTwoDSphere);
+    
+    std::ofstream vtkgmeshTwoDSphere("geomesh_TwoDSphere.vtk");
+    TPZVTKGeoMesh::PrintGMeshVTK(gmesh_TwoDSphere, vtkgmeshTwoDSphere);
+    return gmesh_TwoDSphere;
+    
+}
+
+
+TPZGeoMesh *CreateThreeDSphereGMesh()
+{
+    
+    // Creating geometric mesh
+    
+    TPZGeoMesh *gmesh_ThreeDSphere = new TPZGeoMesh();
+    
+    // Implementation meshes with GMSH
+    
+    std::string grid = "3DSphere.msh";
+    
+    TPZGmshReader Geometry;
+    REAL s = 1.0;
+    Geometry.SetfDimensionlessL(s);
+    
+    gmesh_ThreeDSphere = Geometry.GeometricGmshMesh(grid);
+    const std::string name("ThreeDSphere from gmsh script");
+    gmesh_ThreeDSphere->SetName(name);
+    
+    std::ofstream outgmeshThreeDSphere("geomesh_ThreeDSphere.txt");
+    gmesh_ThreeDSphere->Print(outgmeshThreeDSphere);
+    
+    std::ofstream vtkgmeshThreeDSphere("geomesh_ThreeDSphere.vtk");
+    TPZVTKGeoMesh::PrintGMeshVTK(gmesh_ThreeDSphere, vtkgmeshThreeDSphere);
+    return gmesh_ThreeDSphere;
+    
+}
